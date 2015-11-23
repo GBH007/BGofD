@@ -1,0 +1,12 @@
+#entity
+name=player
+cord=1,6,0,
+id=0
+mp=10.0
+hp=100.0
+#entity
+name=bot
+cord=1,2,0,
+id=1
+mp=10.0
+hp=10.0

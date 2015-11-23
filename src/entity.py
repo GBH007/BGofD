@@ -22,6 +22,7 @@ class Entity:
 	def load(self, data):
 		parser=stech.OneDataParser(data)
 		self._id=parser.getInt('id')
+		self._type='player' if not self._id else 'entity'
 		parser2=stech.OneDataParser(open(self.__PATH_TO_MAP+'map/entity_info/'+str(self._id)+'.ent').read())
 		self._name=parser.getString('name')
 		self._cord=scord.Cord(parser.getMultiInt('cord'))
@@ -74,6 +75,9 @@ class Entity:
 	def getCord(self):
 		return self._cord
 
+	def getType(self):
+		return self._type
+
 	# def __str__(self):
 	#     s=''
 	#     for i,j in self.__dict__.items():
@@ -86,6 +90,7 @@ class Entitys:
 
 	def __init__(self, z=0):
 		self._entitys={}
+		self._entitys_map={}
 		self.load()
 		if z!=None: self.load(z)
 
@@ -97,6 +102,7 @@ class Entitys:
 		for i in cache:
 			e=Entity(i)
 			self._entitys[e.getId()]=e
+			self._entitys_map[e.getCord().getCord()]=e
 
 	def upload(self, level=None):
 		if level!=None:
@@ -104,20 +110,46 @@ class Entitys:
 		else:
 			f=open(self.__PATH_TO_MAP+'map/ERR.ent', 'w')
 		trash=[]
+		trash1=[]
 		for i in self._entitys:
 			if level==None or self._entitys[i].getZ()==level:
 				print('#entity', file=f)
 				print(self._entitys[i].upload(), end='', file=f)
 				trash.append(i)
+				trash1.append(self._entitys[i].getCord().getCord())
 			# del self._entitys[i]
 		for i in trash:
 			del self._entitys[i]
+		for i in trash1:
+			del self._entitys_map[i]
+
+	def getMap(self,center,dx=15,dy=15):
+		cord=center.getCord()
+		s=[]
+		for i in range(dy*2):
+			s.append([])
+			for j in range(dx*2):
+				cache=self._entitys_map.get((cord[0]+j-15,cord[1]+i-15,cord[2]))
+				if cache:
+					s[i].append(cache.getType())
+				else:
+					s[i].append('void')
+		return s
+
+	def getCordType(self,cord=(0,0,0)):
+		try:
+			return self._entitys_map.get(cord).getType()
+		except:
+			return 'void'
 
 	def getEntity(self,ID):
 		return self._entitys[ID]
 
-	def __del__(self):
+	def destructor(self):
 		self.upload()
+
+	# def __del__(self):
+	# 	self.upload()
 
 
 def main():

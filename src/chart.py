@@ -123,8 +123,11 @@ class Map:
 		except:
 			return 'void'
 
-	def __del__(self):
+	def destructor(self):
 		self.upload()
+
+	# def __del__(self):
+	# 	self.upload()
 
 
 def main():

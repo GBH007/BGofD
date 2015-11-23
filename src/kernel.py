@@ -52,6 +52,13 @@ class Kernel:
 		self._entitys.upload(self._cord.getZ())
 		self._map.upload(self._cord.getZ())
 
+	def destructor(self):
+		self.upload()
+		self._entitys.destructor()
+		self._map.destructor()
+		del self._entitys
+		del self._map
+
 	# def __del__(self):
 	# 	self.upload()
 
@@ -107,7 +114,7 @@ def main():
 	print(k._entitys._entitys[0].getCord())
 	k._action.goDown(0)
 	print(k._entitys._entitys[0].getCord())
-	k.upload()
+	k.destructor()
 
 
 if __name__=='__main__':

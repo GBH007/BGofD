@@ -9,7 +9,7 @@ import sys
 sys.path.append('..')
 import src.cord as scord
 import src.tech as stech
-from src.GOBJ import GOBJs,GOBJr
+from src.GOBJ import GOBJs, GOBJr
 
 
 # class GameObjectPoint:
@@ -35,7 +35,7 @@ class GameObject:
 		self._type=parser.getString('type')
 		self._form=parser.getString('form')
 		self._cord1=scord.Cord(parser.getMultiInt('cord1'))
-		self._cord2=scord.Cord(parser.getMultiInt('cord2'))	#cord2 сдвиг относительно cord1 для form=square
+		self._cord2=scord.Cord(parser.getMultiInt('cord2'))  # cord2 сдвиг относительно cord1 для form=square
 		self.postload()
 
 	def postload(self):
@@ -66,10 +66,11 @@ class GameObject:
 
 class Map:
 	__PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
+
 	def __init__(self, z=0):
 		self._game_objects={}
 		self.load()
-		if z!=None:self.load(z)
+		if z!=None: self.load(z)
 
 	def load(self, level=None):
 		if level!=None:
@@ -100,13 +101,13 @@ class Map:
 		for i in trash:
 			del self._game_objects[i]
 
-	def getMap(self,center,dx=15,dy=15):
+	def getMap(self, center, dx=15, dy=15):
 		cord=center.getCord()
 		s=[]
 		for i in range(dy*2):
 			s.append([])
 			for j in range(dx*2):
-				cache=self._game_objects.get((cord[0]+j-15,cord[1]+i-15,cord[2]))
+				cache=self._game_objects.get((cord[0]+j-15, cord[1]+i-15, cord[2]))
 				if cord[0]+j-15==0 and cord[1]+i-15==0:
 					s[i].append('0')
 					continue
@@ -117,7 +118,7 @@ class Map:
 					s[i].append('void')
 		return s
 
-	def getCordType(self,cord=(0,0,0)):
+	def getCordType(self, cord=(0, 0, 0)):
 		try:
 			return self._game_objects.get(cord).getType()
 		except:

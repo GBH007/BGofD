@@ -16,6 +16,8 @@ TYPE_INFO={
 	'wall': '#',
 	'void': ' ',
 	'0': '+',
+	'player': '@',
+	'entity': 'E',
 	'': '',
 }
 
@@ -47,7 +49,7 @@ class ChatDisplay:
 		return self._display[-20:]
 
 
-class MapDisplay:
+class _MainDisplay:
 	def __init__(self):
 		self._display=[]
 
@@ -57,6 +59,35 @@ class MapDisplay:
 
 	def getMap(self):
 		return self._display
+
+
+class MapDisplay(_MainDisplay): pass
+
+
+class EntityDisplay(_MainDisplay): pass
+
+
+class MainDisplay:
+	def __init__(self):
+		self._map_display=MapDisplay()
+		self._entity_display=EntityDisplay()
+
+	def refreshEntityMap(self, map_data):
+		self._entity_display.refreshMap(map_data)
+
+	def refreshMap(self, map_data):
+		self._map_display.refreshMap(map_data)
+
+	def getMap(self):
+		cache=self._map_display.getMap()
+		cache1=self._entity_display.getMap()
+		s=[]
+		for i in range(len(cache1)):
+			s1=''
+			for j in range(len(cache1[i])):
+				s1+=cache1[i][j] if cache[i][j]==' ' else cache[i][j]
+			s.append(s1)
+		return s
 
 
 class StatDisplay:
@@ -74,15 +105,19 @@ class Display:
 	def __init__(self):
 		self._display=[]
 		self._chat_display=ChatDisplay()
-		self._map_display=MapDisplay()
+		# self._map_display=MapDisplay()
+		self._main_display=MainDisplay()
 		self._stat_dispaly=StatDisplay()
 
 	def refreshMap(self, map_data):
-		self._map_display.refreshMap(map_data)
+		self._main_display.refreshMap(map_data)
+
+	def refreshEntityMap(self, map_data):
+		self._main_display.refreshEntityMap(map_data)
 
 	def refresh(self):
 		self._display=[]
-		map_cache=self._map_display.getMap()
+		map_cache=self._main_display.getMap()
 		for i in range(32):
 			if i==0:
 				self._display.append(self.line_templates['1'])
@@ -108,13 +143,13 @@ def main():
 	print(d)
 
 
-	# print(a._game_objects)
-	# b=MapDisplay()
-	# b.refreshMap(a.getMap(c))
-	# e=b.getMap()
-	# print('#'*30)
-	# for i in e:
-	# 	print(i+'#')
+# print(a._game_objects)
+# b=MapDisplay()
+# b.refreshMap(a.getMap(c))
+# e=b.getMap()
+# print('#'*30)
+# for i in e:
+# 	print(i+'#')
 
 
 if __name__=='__main__':

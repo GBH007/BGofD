@@ -60,7 +60,7 @@ class Entity:
 		data2.addData('mp_max', mp[2])
 		data.construct()
 		data2.construct()
-		print(data2.toData(),file=open(self.__PATH_TO_MAP+'map/entity_info/'+str(self._id)+'.ent','w'))
+		print(data2.toData(), file=open(self.__PATH_TO_MAP+'map/entity_info/'+str(self._id)+'.ent', 'w'))
 		return data.toData()
 
 	def getId(self):
@@ -123,26 +123,26 @@ class Entitys:
 		for i in trash1:
 			del self._entitys_map[i]
 
-	def getMap(self,center,dx=15,dy=15):
+	def getMap(self, center, dx=15, dy=15):
 		cord=center.getCord()
 		s=[]
 		for i in range(dy*2):
 			s.append([])
 			for j in range(dx*2):
-				cache=self._entitys_map.get((cord[0]+j-15,cord[1]+i-15,cord[2]))
+				cache=self._entitys_map.get((cord[0]+j-15, cord[1]+i-15, cord[2]))
 				if cache:
 					s[i].append(cache.getType())
 				else:
 					s[i].append('void')
 		return s
 
-	def getCordType(self,cord=(0,0,0)):
+	def getCordType(self, cord=(0, 0, 0)):
 		try:
 			return self._entitys_map.get(cord).getType()
 		except:
 			return 'void'
 
-	def getEntity(self,ID):
+	def getEntity(self, ID):
 		return self._entitys[ID]
 
 	def destructor(self):

@@ -18,6 +18,7 @@ import src.display as sdisplay
 
 class Kernel:
 	__PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
+	__VERSION='0.0.0.0'
 
 	def __init__(self):
 		self._display=sdisplay.Display()

@@ -69,9 +69,40 @@ class Kernel:
 class Commander:
 	def __init__(self, kernel):
 		self._kernel=kernel
+		self._commands={}
 
-	def command(self, com):
-		com=[i for i in com.parse() if i]
+	def command(self, com): #com строка вида comand1 comand2 comand3 (*argv)
+		search=(com.find('('),com.find(')'))
+		if search[0]!=-1 and search[1]!=-1:
+			argv=com[search[0]+1:search[1]]
+		else:
+			argv=''
+		com=[i for i in com[:search[0]].split(' ') if i]
+		self.goCommand(com,argv)
+
+	def addComand(self,command,function): #command строка вида comand1 comand2 comand3 function обработчик вида func(argv) где argv строка с аргументами
+		command=[i for i in command.split(' ') if i]
+		com=self._commands
+		com1=None
+		for i in command:
+			if not i in com:
+				com[i]={}
+			com1=(com,i)
+			com=com[i]
+		com1[0][com1[1]]=function
+
+
+	def goCommand(self,command_list,argv):
+		try:
+			com=self._commands
+			for i in command_list:
+				com=com[i]
+			com(argv)
+			return True
+		except KeyError:
+			return False
+
+
 
 
 class Action:

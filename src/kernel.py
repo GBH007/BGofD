@@ -83,13 +83,11 @@ class Commander:
 	def addComand(self,command,function): #command строка вида comand1 comand2 comand3 function обработчик вида func(argv) где argv строка с аргументами
 		command=[i for i in command.split(' ') if i]
 		com=self._commands
-		com1=None
-		for i in command:
-			if not i in com:
-				com[i]={}
-			com1=(com,i)
-			com=com[i]
-		com1[0][com1[1]]=function
+		for i in range(len(command)-1):
+			if not command[i] in com:
+				com[command[i]]={}
+			com=com[command[i]]
+		com[command[-1]]=function
 
 
 	def goCommand(self,command_list,argv):

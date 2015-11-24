@@ -32,9 +32,10 @@ def str_parser17(s):
 
 
 class ChatDisplay:
-	__PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
+	# __PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
 
-	def __init__(self):
+	def __init__(self, PATH_TO_MAP):
+		self.__PATH_TO_MAP=PATH_TO_MAP
 		self._display=[]
 		cache=open(self.__PATH_TO_MAP+'map/chat.log').readlines()
 		for i in cache[-20:]:
@@ -103,9 +104,10 @@ class Display:
 		'3': '#'*19+'{0:30}#'
 	}
 
-	def __init__(self):
+	def __init__(self, PATH_TO_MAP):
+		self.__PATH_TO_MAP=PATH_TO_MAP
 		self._display=[]
-		self._chat_display=ChatDisplay()
+		self._chat_display=ChatDisplay(self.__PATH_TO_MAP)
 		# self._map_display=MapDisplay()
 		self._main_display=MainDisplay()
 		self._stat_dispaly=StatDisplay()

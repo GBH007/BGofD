@@ -23,7 +23,7 @@ class Kernel:
 
 	def __init__(self,PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'):
 		self.__PATH_TO_MAP=PATH_TO_MAP
-		self._display=sdisplay.Display()
+		self._display=sdisplay.Display(self.__PATH_TO_MAP)
 		self._entitys=sentity.Entitys(self.__PATH_TO_MAP,z=None)
 		self._map=schart.Map(self.__PATH_TO_MAP,z=None)
 		self.preCordLoad()
@@ -126,7 +126,7 @@ class Commander:
 				com=com[i]
 			com(argv)
 			return True
-		except KeyError:
+		except (KeyError,TypeError):
 			print('Commander -> command not found')
 			return False
 

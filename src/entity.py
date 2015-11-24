@@ -90,7 +90,7 @@ class Entitys:
 
 	def __init__(self, z=0):
 		self._entitys={}
-		self._entitys_map={}
+		# self._entitys_map={}
 		self.load()
 		if z!=None: self.load(z)
 
@@ -102,7 +102,7 @@ class Entitys:
 		for i in cache:
 			e=Entity(i)
 			self._entitys[e.getId()]=e
-			self._entitys_map[e.getCord().getCord()]=e
+			# self._entitys_map[e.getCord().getCord()]=e
 
 	def upload(self, level=None):
 		if level!=None:
@@ -110,26 +110,36 @@ class Entitys:
 		else:
 			f=open(self.__PATH_TO_MAP+'map/ERR.ent', 'w')
 		trash=[]
-		trash1=[]
+		# trash1=[]
 		for i in self._entitys:
 			if level==None or self._entitys[i].getZ()==level:
 				print('#entity', file=f)
 				print(self._entitys[i].upload(), end='', file=f)
 				trash.append(i)
-				trash1.append(self._entitys[i].getCord().getCord())
+				# trash1.append(self._entitys[i].getCord().getCord())
 			# del self._entitys[i]
 		for i in trash:
 			del self._entitys[i]
-		for i in trash1:
-			del self._entitys_map[i]
+		# for i in trash1:
+		# 	try:
+		# 		del self._entitys_map[i]
+		# 	except KeyError:
+		# 		print(i)
+
+	def __entityMap(self):
+		em={}
+		for i in self._entitys:
+			em[self._entitys[i].getCord().getCord()]=self._entitys[i]
+		return em
 
 	def getMap(self, center, dx=15, dy=15):
 		cord=center.getCord()
 		s=[]
+		em=self.__entityMap()
 		for i in range(dy*2):
 			s.append([])
 			for j in range(dx*2):
-				cache=self._entitys_map.get((cord[0]+j-15, cord[1]+i-15, cord[2]))
+				cache=em.get((cord[0]+j-15, cord[1]+i-15, cord[2]))
 				if cache:
 					s[i].append(cache.getType())
 				else:
@@ -137,8 +147,9 @@ class Entitys:
 		return s
 
 	def getCordType(self, cord=(0, 0, 0)):
+		em=self.__entityMap()
 		try:
-			return self._entitys_map.get(cord).getType()
+			return em.get(cord).getType()
 		except:
 			return 'void'
 

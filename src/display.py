@@ -54,6 +54,7 @@ class _MainDisplay:
 		self._display=[]
 
 	def refreshMap(self, map_data):
+		self._display=[]
 		self._display=[''.join([TYPE_INFO.get(j, ' ') for j in i]) for i in map_data]
 		self._display.reverse()
 

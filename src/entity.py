@@ -14,9 +14,10 @@ import src.cord as scord
 
 
 class Entity:
-	__PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
+	# __PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
 
-	def __init__(self, data):
+	def __init__(self, data, PATH_TO_MAP):
+		self.__PATH_TO_MAP=PATH_TO_MAP
 		self.load(data)
 
 	def load(self, data):
@@ -86,9 +87,10 @@ class Entity:
 
 
 class Entitys:
-	__PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
+	# __PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
 
-	def __init__(self, z=0):
+	def __init__(self, PATH_TO_MAP, z=0):
+		self.__PATH_TO_MAP=PATH_TO_MAP
 		self._entitys={}
 		# self._entitys_map={}
 		self.load()
@@ -100,9 +102,9 @@ class Entitys:
 		else:
 			cache=[i for i in open(self.__PATH_TO_MAP+'map/ERR.ent').read().split('#entity') if i]
 		for i in cache:
-			e=Entity(i)
+			e=Entity(i, self.__PATH_TO_MAP)
 			self._entitys[e.getId()]=e
-			# self._entitys_map[e.getCord().getCord()]=e
+		# self._entitys_map[e.getCord().getCord()]=e
 
 	def upload(self, level=None):
 		if level!=None:
@@ -116,7 +118,7 @@ class Entitys:
 				print('#entity', file=f)
 				print(self._entitys[i].upload(), end='', file=f)
 				trash.append(i)
-				# trash1.append(self._entitys[i].getCord().getCord())
+			# trash1.append(self._entitys[i].getCord().getCord())
 			# del self._entitys[i]
 		for i in trash:
 			del self._entitys[i]

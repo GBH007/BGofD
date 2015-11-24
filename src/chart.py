@@ -65,9 +65,10 @@ class GameObject:
 
 
 class Map:
-	__PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
+	# __PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
 
-	def __init__(self, z=0):
+	def __init__(self,PATH_TO_MAP, z=0):
+		self.__PATH_TO_MAP=PATH_TO_MAP
 		self._game_objects={}
 		self.load()
 		if z!=None: self.load(z)

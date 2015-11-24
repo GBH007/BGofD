@@ -18,13 +18,14 @@ import src.display as sdisplay
 class ExitError(Exception): pass
 
 class Kernel:
-	__PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
+	# __PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
 	__VERSION='0.0.0.0'
 
-	def __init__(self):
+	def __init__(self,PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'):
+		self.__PATH_TO_MAP=PATH_TO_MAP
 		self._display=sdisplay.Display()
-		self._entitys=sentity.Entitys(z=None)
-		self._map=schart.Map(z=None)
+		self._entitys=sentity.Entitys(self.__PATH_TO_MAP,z=None)
+		self._map=schart.Map(self.__PATH_TO_MAP,z=None)
 		self.preCordLoad()
 		# self._cord=scord.Cord(0,0,0)
 		self._comander=Commander(self)
@@ -60,10 +61,13 @@ class Kernel:
 				for i in range(l):
 					fu(0)
 			return f
+		def home(argv):
+			self._cord.setCord((0,0,0))
 		self._comander.addComand('go down',mf(self._action.goDown))
 		self._comander.addComand('go left',mf(self._action.goLeft))
 		self._comander.addComand('go right',mf(self._action.goRight))
 		self._comander.addComand('go up',mf(self._action.goUp))
+		self._comander.addComand('home',home)
 
 	def command(self,com): #com строка
 		self._comander.command(com)

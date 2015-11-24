@@ -40,14 +40,23 @@ class ChatDisplay:
 		cache=open(self.__PATH_TO_MAP+'map/chat.log').readlines()
 		for i in cache[-20:]:
 			for j in str_parser17(i):
-				self._display.append(j)
+				self._display.append(j.strip('\n'))
 
 	def addMessage(self, message):
 		for i in str_parser17(message):
-			self._display.append(i)
+			self._display.append(i.strip('\n'))
 
 	def getLast20(self):
-		return self._display[-20:]
+		s=self._display[-20:]
+		if len(s)<20:
+			for i in range(20-len(s)):
+				s.insert(0,'')
+		return s
+
+	def destructor(self):
+		f=open(self.__PATH_TO_MAP+'map/chat.log', 'w')
+		for i in self._display:
+			print(i, file=f)
 
 
 class _MainDisplay:
@@ -118,9 +127,13 @@ class Display:
 	def refreshEntityMap(self, map_data):
 		self._main_display.refreshEntityMap(map_data)
 
+	def addMessage(self, message):
+		self._chat_display.addMessage(message)
+
 	def refresh(self):
 		self._display=[]
 		map_cache=self._main_display.getMap()
+		chat_cache=self._chat_display.getLast20()
 		for i in range(32):
 			if i==0:
 				self._display.append(self.line_templates['1'])
@@ -129,12 +142,18 @@ class Display:
 			elif i==10:
 				self._display.append(self.line_templates['3'].format(map_cache[i-1]))
 			elif i<31:
-				self._display.append(self.line_templates['2'].format('', map_cache[i-1]))
+				self._display.append(self.line_templates['2'].format(chat_cache[i-11], map_cache[i-1]))
 			else:
 				self._display.append(self.line_templates['1'])
 
 	def __str__(self):
 		return '\n'.join(self._display)
+
+	def destructor(self):
+		self._chat_display.destructor()
+		del self._chat_display
+		del self._main_display
+		del self._stat_dispaly
 
 
 def main():

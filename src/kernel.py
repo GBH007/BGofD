@@ -15,17 +15,20 @@ import src.entity as sentity
 import src.chart as schart
 import src.display as sdisplay
 
+
 class ExitError(Exception): pass
+class KernelPanic(Exception): pass
+
 
 class Kernel:
 	# __PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
 	__VERSION='0.0.0.0'
 
-	def __init__(self,PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'):
+	def __init__(self, PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'):
 		self.__PATH_TO_MAP=PATH_TO_MAP
 		self._display=sdisplay.Display(self.__PATH_TO_MAP)
-		self._entitys=sentity.Entitys(self.__PATH_TO_MAP,z=None)
-		self._map=schart.Map(self.__PATH_TO_MAP,z=None)
+		self._entitys=sentity.Entitys(self.__PATH_TO_MAP, z=None)
+		self._map=schart.Map(self.__PATH_TO_MAP, z=None)
 		self.preCordLoad()
 		# self._cord=scord.Cord(0,0,0)
 		self._comander=Commander(self)
@@ -51,7 +54,7 @@ class Kernel:
 
 	def __commands(self):
 		def mf(func):
-			def f(argv,fu=func):
+			def f(argv, fu=func):
 				try:
 					l=int(argv)
 					if l==0:
@@ -60,17 +63,27 @@ class Kernel:
 					l=1
 				for i in range(l):
 					fu(0)
-			return f
-		def home(argv):
-			self._cord.setCord((0,0,0))
-		self._comander.addComand('go down',mf(self._action.goDown))
-		self._comander.addComand('go left',mf(self._action.goLeft))
-		self._comander.addComand('go right',mf(self._action.goRight))
-		self._comander.addComand('go up',mf(self._action.goUp))
-		self._comander.addComand('home',home)
 
-	def command(self,com): #com строка
+			return f
+
+		def home(argv):
+			self._cord.setCord((0, 0, 0))
+
+		def lol(argv):
+			raise KernelPanic
+
+		self._comander.addComand('go down', mf(self._action.goDown))
+		self._comander.addComand('go left', mf(self._action.goLeft))
+		self._comander.addComand('go right', mf(self._action.goRight))
+		self._comander.addComand('go up', mf(self._action.goUp))
+		self._comander.addComand('home', home)
+		self._comander.addComand('ultui nahui', lol)
+
+	def command(self, com):  # com строка
 		self._comander.command(com)
+
+	def addMessage(self, message):
+		self._display.addMessage(message)
 
 	def _load(self):
 		self._map.load(self._cord.getZ())
@@ -85,8 +98,12 @@ class Kernel:
 		self._upload()
 		self._entitys.destructor()
 		self._map.destructor()
+		self._display.destructor()
+		del self._display
 		del self._entitys
 		del self._map
+		del self._action
+		del self._comander
 
 	# def __del__(self):
 	# 	self.upload()
@@ -97,8 +114,8 @@ class Commander:
 		self._kernel=kernel
 		self._commands={}
 
-	def command(self, com): #com строка вида comand1 comand2 comand3 (*argv)
-		search=(com.find('('),com.find(')'))
+	def command(self, com):  # com строка вида comand1 comand2 comand3 (*argv)
+		search=(com.find('('), com.find(')'))
 		if com.find('exit')==0:
 			raise ExitError
 		if search[0]!=-1 and search[1]!=-1:
@@ -107,9 +124,10 @@ class Commander:
 		elif search[0]==-1 and search[1]==-1:
 			argv=''
 			com=[i for i in com.split(' ') if i]
-		self.goCommand(com,argv)
+		self.goCommand(com, argv)
 
-	def addComand(self,command,function): #command строка вида comand1 comand2 comand3 function обработчик вида func(argv) где argv строка с аргументами
+	def addComand(self, command,
+				  function):  # command строка вида comand1 comand2 comand3 function обработчик вида func(argv) где argv строка с аргументами
 		command=[i for i in command.split(' ') if i]
 		com=self._commands
 		for i in range(len(command)-1):
@@ -118,19 +136,17 @@ class Commander:
 			com=com[command[i]]
 		com[command[-1]]=function
 
-
-	def goCommand(self,command_list,argv):
+	def goCommand(self, command_list, argv):
 		try:
 			com=self._commands
 			for i in command_list:
 				com=com[i]
 			com(argv)
 			return True
-		except (KeyError,TypeError):
-			print('Commander -> command not found')
+		except (KeyError, TypeError):
+			self._kernel.addMessage('Commander -> command not found')
+			# print()
 			return False
-
-
 
 
 class Action:

@@ -17,6 +17,8 @@ import src.display as sdisplay
 
 
 class ExitError(Exception): pass
+
+
 class KernelPanic(Exception): pass
 
 
@@ -53,8 +55,8 @@ class Kernel:
 		self._cord=scord.Cord(parser.getMultiInt('cord'))
 
 	def __commands(self):
-		def mf(func):
-			def f(argv, fu=func):
+		def mv(side):
+			def f(argv,side=side):
 				try:
 					l=int(argv)
 					if l==0:
@@ -62,7 +64,7 @@ class Kernel:
 				except ValueError:
 					l=1
 				for i in range(l):
-					fu(0)
+					self._action.move(0,side)
 
 			return f
 
@@ -72,10 +74,10 @@ class Kernel:
 		def lol(argv):
 			raise KernelPanic
 
-		self._comander.addComand('go down', mf(self._action.goDown))
-		self._comander.addComand('go left', mf(self._action.goLeft))
-		self._comander.addComand('go right', mf(self._action.goRight))
-		self._comander.addComand('go up', mf(self._action.goUp))
+		self._comander.addComand('go down', mv('down'))
+		self._comander.addComand('go left', mv('left'))
+		self._comander.addComand('go right', mv('right'))
+		self._comander.addComand('go up', mv('up'))
 		self._comander.addComand('home', home)
 		self._comander.addComand('ultui nahui', lol)
 
@@ -155,31 +157,16 @@ class Action:
 		self._map=_map
 		self._entitys=entitys
 
-	def goLeft(self, ID):
+	def move(self, ID, side):
+		sides={
+			'up': (0, 1, 0),
+			'down': (0, -1, 0),
+			'left': (-1, 0, 0),
+			'right': (1, 0, 0),
+		}
 		cord1=self._entitys.getEntity(ID).getCord()
 		cord=cord1.getCord()
-		cord=(cord[0]-1, cord[1], cord[2])
-		if self._map.getCordType(cord)=='void' and self._entitys.getCordType(cord)=='void':
-			cord1.setCord(cord)
-
-	def goRight(self, ID):
-		cord1=self._entitys.getEntity(ID).getCord()
-		cord=cord1.getCord()
-		cord=(cord[0]+1, cord[1], cord[2])
-		if self._map.getCordType(cord)=='void' and self._entitys.getCordType(cord)=='void':
-			cord1.setCord(cord)
-
-	def goUp(self, ID):
-		cord1=self._entitys.getEntity(ID).getCord()
-		cord=cord1.getCord()
-		cord=(cord[0], cord[1]+1, cord[2])
-		if self._map.getCordType(cord)=='void' and self._entitys.getCordType(cord)=='void':
-			cord1.setCord(cord)
-
-	def goDown(self, ID):
-		cord1=self._entitys.getEntity(ID).getCord()
-		cord=cord1.getCord()
-		cord=(cord[0], cord[1]-1, cord[2])
+		cord=(cord[0]+sides[side][0], cord[1]+sides[side][1], cord[2]+sides[side][2])
 		if self._map.getCordType(cord)=='void' and self._entitys.getCordType(cord)=='void':
 			cord1.setCord(cord)
 

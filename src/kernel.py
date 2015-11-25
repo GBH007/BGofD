@@ -38,13 +38,10 @@ class Kernel:
 		self._load()
 		self.__commands()
 
-	def refreshMap(self):
-		self._display.refreshMap(self._map.getMap(self._cord))
-
-	def refreshEntityMap(self):
-		self._display.refreshEntityMap(self._entitys.getMap(self._cord))
-
 	def refreshDisplay(self):
+		self._display.refreshMap(self._map.getMap(self._cord))
+		self._display.refreshEntityMap(self._entitys.getMap(self._cord))
+		self._display.refreshStat(self._entitys.getEntity(0).getStats().getStats())
 		self._display.refresh()
 
 	def printDisplay(self):
@@ -56,7 +53,7 @@ class Kernel:
 
 	def __commands(self):
 		def mv(side):
-			def f(argv,side=side):
+			def f(argv, side=side):
 				try:
 					l=int(argv)
 					if l==0:
@@ -64,7 +61,7 @@ class Kernel:
 				except ValueError:
 					l=1
 				for i in range(l):
-					self._action.move(0,side)
+					self._action.move(0, side)
 
 			return f
 
@@ -174,8 +171,6 @@ class Action:
 def main():
 	k=Kernel()
 	while 1:
-		k.refreshMap()
-		k.refreshEntityMap()
 		k.refreshDisplay()
 		k.printDisplay()
 		a=input('->')
@@ -188,6 +183,7 @@ def main():
 		# k._action.goDown(0)
 		# print(k._entitys._entitys[0].getCord())
 	k.destructor()
+	del k
 
 
 if __name__=='__main__':

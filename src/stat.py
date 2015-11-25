@@ -19,7 +19,7 @@ class Stat:
 		self.stab()
 
 	def __str__(self):
-		return self._name+'={0}|{1}|{2}'.format(self._min, self._cur, self._max)
+		return '{0}|{1}'.format(self._cur, self._max)
 
 	def stab(self):
 		if self._min!=None:
@@ -77,3 +77,26 @@ class Level(Stat):
 	def changeXp(self, dxp):
 		self._xp+=dxp
 		self.stab()
+
+
+class StatSet:
+	def __init__(self):
+		self._stats={}
+
+	def addStat(self, name, stat):
+		self._stats[name]=stat
+
+	def getStats(self, queue=None, template=None):
+		s=[]
+		if not template:
+			template='{0}={1}'
+		if queue:
+			for i in queue:
+				try:
+					s.append(template.format(i, str(self._stats[i])))
+				except KeyError:
+					pass
+		else:
+			for i in self._stats:
+				s.append(template.format(i, str(self._stats[i])))
+		return s

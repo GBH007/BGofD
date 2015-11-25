@@ -25,9 +25,11 @@ TYPE_INFO={
 def str_parser17(s):
 	cache=s[:]
 	s=[]
-	for i in range(len(cache)//17+1):
-		s.append(cache[:17])
-		cache=cache[17:]
+	for i in cache.split('\n'):
+		if i:
+			for j in range(len(i)//17+1):
+				s.append(i[:17])
+				i=i[17:]
 	return s
 
 
@@ -50,7 +52,7 @@ class ChatDisplay:
 		s=self._display[-20:]
 		if len(s)<20:
 			for i in range(20-len(s)):
-				s.insert(0,'')
+				s.insert(0, '')
 		return s
 
 	def destructor(self):
@@ -105,6 +107,19 @@ class StatDisplay:
 	def __init__(self):
 		self._display=[]
 
+	def refresh(self, entity_stats):
+		self._display=[]
+		for i in entity_stats:
+			for j in str_parser17(i):
+				self._display.append(j)
+
+	def getStats(self):
+		s=self._display[:10]
+		if len(s)<10:
+			for i in range(10-len(s)):
+				s.append('')
+		return s
+
 
 class Display:
 	line_templates={
@@ -127,6 +142,9 @@ class Display:
 	def refreshEntityMap(self, map_data):
 		self._main_display.refreshEntityMap(map_data)
 
+	def refreshStat(self, entity_stats):
+		self._stat_dispaly.refresh(entity_stats)
+
 	def addMessage(self, message):
 		self._chat_display.addMessage(message)
 
@@ -134,11 +152,12 @@ class Display:
 		self._display=[]
 		map_cache=self._main_display.getMap()
 		chat_cache=self._chat_display.getLast20()
+		stat_cache=self._stat_dispaly.getStats()
 		for i in range(32):
 			if i==0:
 				self._display.append(self.line_templates['1'])
 			elif i<10:
-				self._display.append(self.line_templates['2'].format('', map_cache[i-1]))
+				self._display.append(self.line_templates['2'].format(stat_cache[i-1], map_cache[i-1]))
 			elif i==10:
 				self._display.append(self.line_templates['3'].format(map_cache[i-1]))
 			elif i<31:

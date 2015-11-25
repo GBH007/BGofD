@@ -31,4 +31,4 @@ class Cord:
 		return (self._x**2+self._y**2+self._z**2)
 
 	def __str__(self):
-		return '[{0:4}][{1:4}][{2:4}]'.format(self._x, self._y, self._z)
+		return '{0:3} {1:3}\nfloor={2:3}'.format(self._x, self._y, self._z)

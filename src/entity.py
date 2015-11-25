@@ -41,6 +41,12 @@ class Entity:
 		)
 		self._hp=sstat.Stat(name='hp', st=hp)
 		self._mp=sstat.Stat(name='mp', st=mp)
+		self._stats=sstat.StatSet()
+		self._stats.addStat('cord', self._cord)
+		self._stats.addStat('hp', self._hp)
+		self._stats.addStat('mp', self._mp)
+		self._stats.addStat('name', self._name)
+		self._stats.addStat('id', self._id)
 
 	def upload(self):
 		data=stech.OneDataConstructor()
@@ -78,6 +84,9 @@ class Entity:
 
 	def getType(self):
 		return self._type
+
+	def getStats(self):
+		return self._stats
 
 	# def __str__(self):
 	#     s=''

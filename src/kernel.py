@@ -64,6 +64,18 @@ class Kernel:
 					self._action.move(0, side)
 
 			return f
+		def at(side):
+			def f(argv, side=side):
+				try:
+					l=int(argv)
+					if l==0:
+						l=1
+				except ValueError:
+					l=1
+				for i in range(l):
+					self._action.attack(0, side)
+
+			return f
 
 		def home(argv):
 			self._cord.setCord((0, 0, 0))
@@ -75,6 +87,12 @@ class Kernel:
 		self._comander.addComand('go left', mv('left'))
 		self._comander.addComand('go right', mv('right'))
 		self._comander.addComand('go up', mv('up'))
+
+		self._comander.addComand('attack down', at('down'))
+		self._comander.addComand('attack left', at('left'))
+		self._comander.addComand('attack right', at('right'))
+		self._comander.addComand('attack up', at('up'))
+
 		self._comander.addComand('home', home)
 		self._comander.addComand('ultui nahui', lol)
 
@@ -125,8 +143,7 @@ class Commander:
 			com=[i for i in com.split(' ') if i]
 		self.goCommand(com, argv)
 
-	def addComand(self, command,
-				  function):  # command строка вида comand1 comand2 comand3 function обработчик вида func(argv) где argv строка с аргументами
+	def addComand(self, command, function):  # command строка вида comand1 comand2 comand3 function обработчик вида func(argv) где argv строка с аргументами
 		command=[i for i in command.split(' ') if i]
 		com=self._commands
 		for i in range(len(command)-1):
@@ -149,23 +166,34 @@ class Commander:
 
 
 class Action:
+	sides={
+		'up': (0, 1, 0),
+		'down': (0, -1, 0),
+		'left': (-1, 0, 0),
+		'right': (1, 0, 0),
+	}
+
 	def __init__(self, kernel, _map, entitys):
 		self._kernel=kernel
 		self._map=_map
 		self._entitys=entitys
 
 	def move(self, ID, side):
-		sides={
-			'up': (0, 1, 0),
-			'down': (0, -1, 0),
-			'left': (-1, 0, 0),
-			'right': (1, 0, 0),
-		}
 		cord1=self._entitys.getEntity(ID).getCord()
 		cord=cord1.getCord()
-		cord=(cord[0]+sides[side][0], cord[1]+sides[side][1], cord[2]+sides[side][2])
+		cord=(cord[0]+self.sides[side][0], cord[1]+self.sides[side][1], cord[2]+self.sides[side][2])
 		if self._map.getCordType(cord)=='void' and self._entitys.getCordType(cord)=='void':
 			cord1.setCord(cord)
+
+	def attack(self, ID, side):
+		cord1=self._entitys.getEntity(ID).getCord()
+		cord=cord1.getCord()
+		cord=(cord[0]+self.sides[side][0], cord[1]+self.sides[side][1], cord[2]+self.sides[side][2])
+		ent=self._entitys.getEntityByCord(cord)
+		if ent:
+			ent1=self._entitys.getEntity(ID)
+			ent.defence(ent1.attack())
+			self._kernel.addMessage('I attack {0} and deal {1} damage'.format(ent.getName(),ent1.attack()))
 
 
 def main():

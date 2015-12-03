@@ -70,6 +70,12 @@ class Entity:
 		print(data2.toData(), file=open(self.__PATH_TO_MAP+'map/entity_info/'+str(self._id)+'.ent', 'w'))
 		return data.toData()
 
+	def attack(self):
+		return 100
+
+	def defence(self,attack):
+		self._hp.changeCur(-attack)
+
 	def getId(self):
 		return self._id
 
@@ -163,6 +169,10 @@ class Entitys:
 			return em.get(cord).getType()
 		except:
 			return 'void'
+
+	def getEntityByCord(self, cord):
+		em=self.__entityMap()
+		return em.get(cord)
 
 	def getEntity(self, ID):
 		return self._entitys[ID]

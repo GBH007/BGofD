@@ -1,5 +1,5 @@
 #object
 cord1=0,1,0,
 type=stone
-form=square
 cord2=4,5,0,
+form=square

@@ -26,7 +26,7 @@ class Kernel:
 	# __PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
 	__VERSION='0.0.0.0'
 
-	def __init__(self, PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'):
+	def __init__(self, PATH_TO_MAP='/home/gbh007/Dropbox/projects/ProjectGame/black_engine_python/'):
 		self.__PATH_TO_MAP=PATH_TO_MAP
 		self._display=sdisplay.Display(self.__PATH_TO_MAP)
 		self._entitys=sentity.Entitys(self.__PATH_TO_MAP, z=None)

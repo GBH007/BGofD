@@ -23,7 +23,7 @@ class KernelPanic(Exception): pass
 
 
 class Kernel:
-	# __PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
+	# __PATH_TO_MAP='/home/gbh007/Dropbox/projects/ProjectGame/black_engine_python/'
 	__VERSION='0.0.0.0'
 
 	def __init__(self, PATH_TO_MAP='/home/gbh007/Dropbox/projects/ProjectGame/black_engine_python/'):

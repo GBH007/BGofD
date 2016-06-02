@@ -10,6 +10,20 @@ sys.path.append('..')
 
 import src.chart as schart
 import src.cord as scord
+import glob
+import os
+import tkinter
+
+class Textures:
+	def __init__(self,PATH_TO_MAP):
+		self.__PATH_TO_MAP=PATH_TO_MAP
+		self.__tx={}
+		for i in glob.glob(self.__PATH_TO_MAP+'/texture/*.gif'):
+			self.__tx[os.path.split(i)[1].split('.')[0]]=tkinter.PhotoImage(file=i)
+	def get(self,name):
+		return self.__tx.get(name,tkinter.PhotoImage())
+		
+		
 
 TYPE_INFO={
 	'stone': '%',

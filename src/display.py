@@ -57,19 +57,21 @@ class ChatDisplay:
 		self.__PATH_TO_MAP=PATH_TO_MAP
 		self.__canvas=canvas
 		self.__kernel=kernel
-		self.__frame=tkinter.Frame(width=200,height=400)
+		#~ self.__frame=tkinter.Frame(self.__canvas,width=200,height=400)
+		self.__frame=tkinter.Frame(self.__canvas)
 		#~ self.__frame=tkinter.Toplevel()
 		#~ self.__chat=tkinter.scrolledtext.ScrolledText(self.__frame,width=200,height=400)
 		self.__chat=tkinter.scrolledtext.ScrolledText(self.__frame)
 		self.__chat.pack()
 		self.__com=tkinter.StringVar()
 		self.__inp=tkinter.Entry(self.__frame,textvariable=self.__com)
-		#~ self.__inp.pack(side=tkinter.LEFT)
-		self.__inp.pack()
+		self.__inp.pack(side=tkinter.LEFT)
+		#~ self.__inp.pack()
 		self.__but=tkinter.Button(self.__frame,text='GO',command=lambda:(self.__kernel.command(self.__com.get()),self.__kernel.refreshDisplay()))
-		#~ self.__but.pack(side=tkinter.RIGHT)
-		self.__but.pack()
-		self.__canvas.create_window(0,400,window=self.__frame)
+		#~ self.__inp.bind('<Enter>',lambda *x:(self.__kernel.command(self.__com.get()),self.__kernel.refreshDisplay()))
+		self.__but.pack(side=tkinter.RIGHT)
+		#~ self.__but.pack()
+		self.__canvas.create_window(0,400,window=self.__frame,anchor=tkinter.NW,width=200,height=400)
 		#~ self._display=[]
 		#~ cache=open(self.__PATH_TO_MAP+'map/chat.log').readlines()
 		#~ for i in cache[-20:]:
@@ -77,7 +79,8 @@ class ChatDisplay:
 				#~ self._display.append(j.strip('\n'))
 
 	def addMessage(self, message):
-		print(message)
+		self.__chat.insert(tkinter.END,message+'\n')
+		self.__chat.yview(tkinter.END)
 		#~ for i in str_parser17(message):
 			#~ self._display.append(i.strip('\n'))
 
@@ -131,7 +134,7 @@ class MainDisplay:
 		for i,e in enumerate(map_data):
 			for j,s in enumerate(e):
 				if self.__tx.get(s):
-					self.__entity_trash.append(self.__canvas.create_image(200+31*j,31*i,image=self.__tx.get(s)))
+					self.__entity_trash.append(self.__canvas.create_image(200+31*j,31*i,image=self.__tx.get(s),anchor=tkinter.NW))
 		#~ self._entity_display.refreshMap(map_data)
 
 	def refreshMap(self, map_data):
@@ -140,9 +143,9 @@ class MainDisplay:
 		for i,e in enumerate(map_data):
 			for j,s in enumerate(e):
 				if self.__tx.get(s):
-					self.__map_trash.append(self.__canvas.create_image(200+31*j,31*i,image=self.__tx.get(s)))
+					self.__map_trash.append(self.__canvas.create_image(200+31*j,31*i,image=self.__tx.get(s),anchor=tkinter.NW))
 				else:
-					self.__map_trash.append(self.__canvas.create_image(200+31*j,31*i,image=self.__tx.get('grass')))
+					self.__map_trash.append(self.__canvas.create_image(200+31*j,31*i,image=self.__tx.get('grass'),anchor=tkinter.NW))
 		#~ self._map_display.refreshMap(map_data)
 
 	def getMap(self):
@@ -161,11 +164,15 @@ class MainDisplay:
 class StatDisplay:
 	def __init__(self,canvas):
 		self.__canvas=canvas
+		self.__trash=[]
 		#~ self.__canvas.pack()
 		#~ self._display=[]
 
 	def refresh(self, entity_stats):
-		pass
+		list(map(self.__canvas.delete,self.__trash))
+		#~ print(entity_stats)
+		self.__trash=[self.__canvas.create_text(10,i*30+10,text=e,anchor=tkinter.NW) for i,e in enumerate(entity_stats)]
+			
 		#~ self._display=[]
 		#~ for i in entity_stats:
 			#~ for j in str_parser17(i):
@@ -191,7 +198,7 @@ class Display:
 		self.__root=tkinter.Tk()
 		self.__kernel=kernel
 		self.__tx=Textures(PATH_TO_MAP)
-		self.__canvas=tkinter.Canvas(self.__root,width=1400,height=1000)
+		self.__canvas=tkinter.Canvas(self.__root,width=1130,height=930)
 		self.__canvas.pack()
 		self.__PATH_TO_MAP=PATH_TO_MAP
 		#~ self._display=[]

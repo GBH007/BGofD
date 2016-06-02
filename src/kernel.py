@@ -28,7 +28,7 @@ class Kernel:
 
 	def __init__(self, PATH_TO_MAP='/home/gbh007/Dropbox/projects/ProjectGame/black_engine_python/'):
 		self.__PATH_TO_MAP=PATH_TO_MAP
-		self._display=sdisplay.Display(self.__PATH_TO_MAP)
+		self._display=sdisplay.Display(self.__PATH_TO_MAP,self)
 		self._entitys=sentity.Entitys(self.__PATH_TO_MAP, z=None)
 		self._map=schart.Map(self.__PATH_TO_MAP, z=None)
 		self.preCordLoad()
@@ -43,6 +43,8 @@ class Kernel:
 		self._display.refreshEntityMap(self._entitys.getMap(self._cord))
 		self._display.refreshStat(self._entitys.getEntity(0).getStats().getStats())
 		self._display.refresh()
+	def mainloop(self):
+		self._display.mainloop()
 
 	def printDisplay(self):
 		print(self._display)
@@ -198,9 +200,10 @@ class Action:
 
 def main():
 	k=Kernel()
-	while 1:
+	k.mainloop()
+	while 0:
 		k.refreshDisplay()
-		k.printDisplay()
+		#~ k.printDisplay()
 		a=input('->')
 		try:
 			k.command(a)

@@ -1,12 +1,12 @@
 #entity
-mp=10.0
 id=0
+cord=-2,2,0,
 hp=100.0
-cord=1,6,0,
+mp=10.0
 name=player
 #entity
-mp=10.0
 id=1
-hp=10.0
 cord=-1,2,0,
+hp=10.0
+mp=10.0
 name=bot

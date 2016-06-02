@@ -1,5 +1,5 @@
-mp_max=20.0
 hp_max=220.0
+mp_max=20.0
 hp_min=0.0
 cord=-1,2,0,
 mp_min=10.0

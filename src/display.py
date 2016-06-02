@@ -13,27 +13,30 @@ import src.cord as scord
 import glob
 import os
 import tkinter
+import tkinter.scrolledtext
 
 class Textures:
 	def __init__(self,PATH_TO_MAP):
 		self.__PATH_TO_MAP=PATH_TO_MAP
 		self.__tx={}
-		for i in glob.glob(self.__PATH_TO_MAP+'/texture/*.gif'):
+		#~ print(glob.glob(self.__PATH_TO_MAP+'/textures/*.gif'))
+		for i in glob.glob(self.__PATH_TO_MAP+'/textures/*.gif'):
 			self.__tx[os.path.split(i)[1].split('.')[0]]=tkinter.PhotoImage(file=i)
+		#~ print(self.__tx)
 	def get(self,name):
 		return self.__tx.get(name,None)
 		
 		
 
-TYPE_INFO={
-	'stone': '%',
-	'wall': '#',
-	'void': ' ',
-	'0': '+',
-	'player': '@',
-	'entity': 'E',
-	'': '',
-}
+#~ TYPE_INFO={
+	#~ 'stone': '%',
+	#~ 'wall': '#',
+	#~ 'void': ' ',
+	#~ '0': '+',
+	#~ 'player': '@',
+	#~ 'entity': 'E',
+	#~ '': '',
+#~ }
 
 
 #~ def str_parser17(s):
@@ -50,9 +53,23 @@ TYPE_INFO={
 class ChatDisplay:
 	# __PATH_TO_MAP='/home/gbh007/Dropbox/PG/black_engine_python/'
 
-	def __init__(self, PATH_TO_MAP,canvas):
+	def __init__(self, PATH_TO_MAP,canvas,kernel):
 		self.__PATH_TO_MAP=PATH_TO_MAP
 		self.__canvas=canvas
+		self.__kernel=kernel
+		self.__frame=tkinter.Frame(width=200,height=400)
+		#~ self.__frame=tkinter.Toplevel()
+		#~ self.__chat=tkinter.scrolledtext.ScrolledText(self.__frame,width=200,height=400)
+		self.__chat=tkinter.scrolledtext.ScrolledText(self.__frame)
+		self.__chat.pack()
+		self.__com=tkinter.StringVar()
+		self.__inp=tkinter.Entry(self.__frame,textvariable=self.__com)
+		#~ self.__inp.pack(side=tkinter.LEFT)
+		self.__inp.pack()
+		self.__but=tkinter.Button(self.__frame,text='GO',command=lambda:(self.__kernel.command(self.__com.get()),self.__kernel.refreshDisplay()))
+		#~ self.__but.pack(side=tkinter.RIGHT)
+		self.__but.pack()
+		self.__canvas.create_window(0,400,window=self.__frame)
 		#~ self._display=[]
 		#~ cache=open(self.__PATH_TO_MAP+'map/chat.log').readlines()
 		#~ for i in cache[-20:]:
@@ -60,7 +77,7 @@ class ChatDisplay:
 				#~ self._display.append(j.strip('\n'))
 
 	def addMessage(self, message):
-		pass
+		print(message)
 		#~ for i in str_parser17(message):
 			#~ self._display.append(i.strip('\n'))
 
@@ -99,18 +116,33 @@ class ChatDisplay:
 
 
 class MainDisplay:
-	def __init__(self,canvas):
+	def __init__(self,canvas,tx):
 		self.__canvas=canvas
+		self.__entity_trash=[]
+		self.__map_trash=[]
+		self.__tx=tx
 		#~ self.__canvas.pack()
 		#~ self._map_display=MapDisplay()
 		#~ self._entity_display=EntityDisplay()
 
 	def refreshEntityMap(self, map_data):
-		pass
+		map_data.reverse()
+		list(map(self.__canvas.delete,self.__entity_trash))
+		for i,e in enumerate(map_data):
+			for j,s in enumerate(e):
+				if self.__tx.get(s):
+					self.__entity_trash.append(self.__canvas.create_image(200+31*j,31*i,image=self.__tx.get(s)))
 		#~ self._entity_display.refreshMap(map_data)
 
 	def refreshMap(self, map_data):
-		pass
+		map_data.reverse()
+		list(map(self.__canvas.delete,self.__map_trash))
+		for i,e in enumerate(map_data):
+			for j,s in enumerate(e):
+				if self.__tx.get(s):
+					self.__map_trash.append(self.__canvas.create_image(200+31*j,31*i,image=self.__tx.get(s)))
+				else:
+					self.__map_trash.append(self.__canvas.create_image(200+31*j,31*i,image=self.__tx.get('grass')))
 		#~ self._map_display.refreshMap(map_data)
 
 	def getMap(self):
@@ -155,16 +187,21 @@ class Display:
 		#~ '3': '#'*19+'{0:30}#'
 	#~ }
 
-	def __init__(self, PATH_TO_MAP):
+	def __init__(self, PATH_TO_MAP,kernel):
 		self.__root=tkinter.Tk()
-		self.__canvas=tkinter.Canvas(self.__root,width=1100,height=900)
+		self.__kernel=kernel
+		self.__tx=Textures(PATH_TO_MAP)
+		self.__canvas=tkinter.Canvas(self.__root,width=1400,height=1000)
 		self.__canvas.pack()
 		self.__PATH_TO_MAP=PATH_TO_MAP
 		#~ self._display=[]
 		self._stat_dispaly=StatDisplay(self.__canvas)
-		self._main_display=MainDisplay(self.__canvas)
-		self._chat_display=ChatDisplay(self.__PATH_TO_MAP,self.__canvas)
-		# self._map_display=MapDisplay()
+		self._main_display=MainDisplay(self.__canvas,self.__tx)
+		self._chat_display=ChatDisplay(self.__PATH_TO_MAP,self.__canvas,self.__kernel)
+		self.__root.bind('<Up>',lambda *x:(self.__kernel.command('go up'),self.__kernel.refreshDisplay()))
+		self.__root.bind('<Down>',lambda *x:(self.__kernel.command('go down'),self.__kernel.refreshDisplay()))
+		self.__root.bind('<Left>',lambda *x:(self.__kernel.command('go left'),self.__kernel.refreshDisplay()))
+		self.__root.bind('<Right>',lambda *x:(self.__kernel.command('go right'),self.__kernel.refreshDisplay()))
 
 	def refreshMap(self, map_data):
 		self._main_display.refreshMap(map_data)
@@ -178,9 +215,11 @@ class Display:
 	def addMessage(self, message):
 		self._chat_display.addMessage(message)
 
-	def refresh(self):
+	def mainloop(self):
 		self.__root.mainloop()
-		#~ pass
+	def refresh(self):
+		#~ self.__root.mainloop()
+		self.__canvas.update()
 		#~ self._display=[]
 		#~ map_cache=self._main_display.getMap()
 		#~ chat_cache=self._chat_display.getLast20()
